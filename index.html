@@ -15,10 +15,21 @@
         position: fixed;
         top: 0;
         left: 0;
-        bottom: 0;
+        bottom: 1vw;
         width: 19vw;
         padding: 1em;
       }
+
+      #day{
+		position: fixed;
+        /*top: 10vw;*/
+        left: 0;
+        bottom: 0;
+        width: 19vw;
+        height:1vw;
+        padding: 1em;
+      }
+
       #map{
         position: fixed;
         top: 0;
@@ -36,9 +47,10 @@
         margin-bottom: 15px;
       }
       #displayed-list{
-      	height:80%;
-      	overflow:scroll;
+      	height:88%;
+      	overflow-y:scroll;
       	padding: 1%;
+      	margin:0;
       }
 
       #displayed-list li{
@@ -46,8 +58,34 @@
       }
 
       hr{
-      	margin-top:0;
+      	margin:3%;
       }
+
+      body{
+      	font-size:100%;
+      	font-size:1vw;
+      }
+
+      button {
+      	width:15%;
+      	padding:0;
+      	font-size: inherit;
+      	margin-left:auto;
+      	margin-right:auto;
+      }
+
+      #info h1{
+      	font-size:2.1vw;
+      	margin-top:1%;
+      	margin-bottom:1%;
+      }
+      #info h3{
+      	font-size:1.15vw;
+      	margin-top:1%;
+      	margin-bottom:1%;
+      }
+
+
     </style>
 
     
@@ -59,7 +97,10 @@
 
       <ul id="displayed-list"></ul>
       <hr>
-      <div>
+      
+    </div>
+
+    <div id="day">
       	<button onclick="loadDay(1)">Mon</button>
       	<button onclick="loadDay(2)">Tue</button>
       	<button onclick="loadDay(3)">Wed</button>
@@ -67,7 +108,7 @@
       	<button onclick="loadDay(5)">Fri</button>
       	<button onclick="loadDay(6)">Sat</buttons>
       </div>
-    </div>
+
     <div id="map"></div>
 
 <script>
