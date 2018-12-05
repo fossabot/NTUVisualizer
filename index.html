@@ -1,0 +1,255 @@
+<html>
+  <head>
+    <title>NTUVisualizer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/leaflet.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/leaflet.css" rel="stylesheet">
+    <script src="http://skeate.github.io/Leaflet.timeline/javascripts/leaflet.timeline.js"></script>
+    <style>
+      @import url(http://fonts.googleapis.com/css?family=Open+Sans); 
+      html, body{
+        margin: 0;
+        padding: 0;
+        font-family: "Open Sans", sans-serif;
+      }
+      #info{
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 19vw;
+        padding: 1em;
+      }
+      #map{
+        position: fixed;
+        top: 0;
+        left: 20vw;
+        bottom: 0;
+        right: 0;
+      }
+      .leaflet-bottom.leaflet-left{
+        width: 100%;
+      }
+      .leaflet-control-container .leaflet-timeline-controls{
+        box-sizing: border-box;
+        width: 100%;
+        margin: 0;
+        margin-bottom: 15px;
+      }
+      #displayed-list{
+      	height:80%;
+      	overflow:scroll;
+      	padding: 1%;
+      }
+
+      #displayed-list li{
+      	padding-bottom:0.3em;
+      }
+
+      hr{
+      	margin-top:0;
+      }
+    </style>
+
+    
+  </head>
+  <body>
+    <div id="info">
+      <h1>NTUVisualizer</h1>
+      <h3>Currently displayed:</h3>
+
+      <ul id="displayed-list"></ul>
+      <hr>
+      <div>
+      	<button onclick="loadDay(1)">Mon</button>
+      	<button onclick="loadDay(2)">Tue</button>
+      	<button onclick="loadDay(3)">Wed</button>
+      	<button onclick="loadDay(4)">Thur</button>
+      	<button onclick="loadDay(5)">Fri</button>
+      	<button onclick="loadDay(6)">Sat</buttons>
+      </div>
+    </div>
+    <div id="map"></div>
+
+<script>
+
+	String.prototype.hashCode = function() {
+	  var hash = 0, i, chr;
+	  if (this.length === 0) return hash;
+	  for (i = 0; i < this.length; i++) {
+	    chr   = this.charCodeAt(i);
+	    hash  = ((hash << 5) - hash) + chr;
+	    hash |= 0; // Convert to 32bit integer
+	  }
+	  return hash;
+	};
+
+	
+		var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png?access_token={accessToken}';
+	      var osmAttrib = '&copy; <a href="http://openstreetmap.org/copyright">' +
+	        'OpenStreetMap</a> contributors';
+
+	      var osm = L.tileLayer(osmUrl, {
+	        //maxZoom: 16,
+	        accessToken: 'pk.eyJ1IjoiZ3BoMDA0IiwiYSI6IkhocWhaWGsifQ.7nvCQs-IjZ-VfsIWe1gdJw',
+	        attribution: osmAttrib,
+	        noWrap: true
+	      });
+
+	      var map = L.map('map', {
+	        layers: [osm],
+	        center: new L.LatLng(1.348278, 103.683070),
+	        zoom: 16
+	        ,maxBounds: [[1.358966, 103.674560], [1.338158, 103.692232]]
+	      });
+
+
+	   var loadJSON = function(callback,file) {   
+
+		    var xobj = new XMLHttpRequest();
+		        xobj.overrideMimeType("application/json");
+		    xobj.open('GET', 'Data/'+file+'.json', true);
+		    xobj.onreadystatechange = function () {
+		          if (xobj.readyState == 4 && xobj.status == "200") {
+		            // Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
+		            callback(JSON.parse(xobj.responseText));
+		          }
+		    };
+		    xobj.send(null);  
+		 }
+
+	 
+		var classList = {};
+		var LocationList = [];
+
+		var today = new Date();
+
+		function init() {
+
+			loadJSON(function(response) {
+				locationList=response;
+				loadDay(today.getDay());
+			},'FinalData');
+			
+		}
+		init();
+
+
+
+		var getInterval = function(item) {
+          var start = -1;
+          var end = new Date();
+          today.setHours(Math.floor(item.properties.time.start/100));
+          today.setMinutes(Math.floor(item.properties.time.start%100));
+          start=today.getTime();
+          today.setHours(Math.floor(item.properties.time.end/100));
+          today.setMinutes(Math.floor(item.properties.time.end%100));
+          end=today.getTime();
+          return {
+            start: start,
+			end:   end
+          };
+        };
+
+        var timelineControl = L.timelineSliderControl({
+          formatOutput: function(timestamp){
+          	
+          	var date = new Date(timestamp);
+
+          	var timeFormatted = "";
+          	
+
+          	if(date.getHours()<10)
+          		timeFormatted = "0" + date.getHours();
+          	else
+          		timeFormatted = date.getHours();
+
+          	timeFormatted += ":";
+
+          	if(date.getMinutes()<10)
+          		timeFormatted += "0" + date.getMinutes()
+          	else
+          		timeFormatted += date.getMinutes()
+
+          	return timeFormatted;
+          }
+        });
+
+        var updateList = function (timeline){
+			var displayed = timeline.getLayers();
+	        var list = document.getElementById('displayed-list');
+	        list.innerHTML = "";
+	        var listHTML = "";
+	        var hasharray = [];
+	        displayed.forEach(function(item){
+	        	if(hasharray.indexOf(item.feature.properties.ModCode.hashCode()) < 0){
+	        		listHTML+= '<li>' + item.feature.properties.ModCode + ' ' + item.feature.properties.ModName + '</li>';
+	        		hasharray.push(item.feature.properties.ModCode.hashCode());
+	        	}
+	        });
+	        list.innerHTML = listHTML;
+		}
+
+		function loadDay(day){
+
+			map.eachLayer(function (layer) {
+				if(layer != osm)
+			    	map.removeLayer(layer);
+			});
+
+			loadJSON(function(classes) {
+			    classList = {
+				  "type": "FeatureCollection",
+				  "features": [
+				    
+				  ]
+				};
+
+			    var arrayLength = classes.length;
+				for (var i = 0; i < arrayLength; i++) {
+				    var latlng = locationList[classes[i]["location"]];
+
+				    if(latlng != undefined){
+					    var data = {
+					    	"type":"Feature",
+					    	"properties":classes[i],
+					    	"geometry":{
+					    		"type":"Point",
+					    		"coordinates":[latlng[1],latlng[0]]
+					    	}
+					    }
+
+					    classList.features.push(data);
+				    }else{
+				    	console.log(classes[i]["location"]);
+				    }
+				}
+
+			        var timeline = L.timeline(classList, {
+			          getInterval: getInterval,
+			          pointToLayer: function(data, latlng){
+			             return L.circleMarker(latlng, {
+			               radius: 3,
+			               color: "hsl(1, 100%, 50%)",
+			               fillColor: "hsl(1, 100%, 50%)"
+			             }).bindPopup('<b>'+data.properties.location+'</b>'
+			             + "<br />" + data.properties.ModCode + ' : ' + data.properties.ModName 
+			             + "<br />" + data.properties.time.full
+			             + "<br />" + data.properties.type
+			             + "<br />" + 'Group: '+ data.properties.group
+			             + "<br />" + data.properties.remarks);
+			          }
+			        });
+
+			        timelineControl.addTo(map);
+			        timelineControl.addTimelines(timeline);
+			        timeline.addTo(map);
+			        timeline.on('change', function(e){
+			         updateList(e.target);
+			        });
+			        updateList(timeline);
+
+		 	},'ClassList/'+day+'/classList');
+		}
+    </script>
+  </body>
+</html>
