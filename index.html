@@ -16,7 +16,7 @@
         position: fixed;
         top: 0;
         left: 0;
-        bottom: 10vh;
+        bottom: 8vh;
         width: 19vw;
         padding: 1em;
       }
@@ -27,7 +27,7 @@
         left: 0;
         bottom: 0;
         width: 19vw;
-        height:10vh;
+        height:8vh;
         padding: 1em;
       }
 
@@ -53,8 +53,8 @@
         margin-bottom: 15px;
       }
       #displayed-list{
-      	height:80%;
-      	height:75vh;
+      	height:81%;
+      	height:77vh;
       	overflow-y:scroll;
       	padding: 1%;
       	margin:0;
@@ -284,12 +284,6 @@
 
                         classList.features.push(data);
 
-                        if (Number(classes[i].time.start) < earliest)
-                            earliest = Number(classes[i].time.start);
-
-                        if (Number(classes[i].time.end) > latest)
-                            latest = Number(classes[i].time.end);
-
                     } else {
                         console.log(classes[i]["location"]);
                     }
@@ -321,8 +315,6 @@
                     updateList(e.target);
                 });
                 updateList(timeline);
-
-                console.log(Object.keys(timelineControl));
                 timelineControl._stepDuration = 1000;
                 timelineControl._stepSize = 900000
 
