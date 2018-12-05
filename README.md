@@ -2,6 +2,7 @@
 Visualize currently occuring classes in Nanyang Tech
 
 
+
 TODO:
 
 Mobile Responsive
@@ -14,15 +15,21 @@ Check on location data
 
 Switch Leaflet.js plugin (laggy)
 
+
+
 Done:
 
 Basic Leaflet with 6 day week (Online and unavailable location lefted out)
 
 Lectures only option
 
+
+
 Plan:
 
 Heatmap of sorts maybe
+
+
 
 Built with: [Leaflet.js](https://github.com/Leaflet/Leaflet), [Leaflet-timeline.js](https://github.com/skeate/Leaflet.timeline), Node.js.
 
