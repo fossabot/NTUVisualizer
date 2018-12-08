@@ -15,6 +15,7 @@ Check on location data
 
 Switch Leaflet.js plugin (laggy)
 
+Make List interactive & add About
 
 
 Done:
