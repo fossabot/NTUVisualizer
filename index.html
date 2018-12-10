@@ -123,10 +123,17 @@
       }
 
       #modal-container{
-      	width:300px;height:auto;background:#fff;color:#000;border:1px solid black;padding:3px;
+      	width:300px;
+      	height:auto;
+      	background:#fff;
+      	color:#000;
+      	border:1px solid black;
+      	padding:3px;
       }
       #modal-header{
-      	width:100%; border-bottom:1px solid black;text-align:center
+      	width:100%; 
+      	border-bottom:1px solid black;
+      	text-align:center
       }
 
       #modal-header h1{
@@ -138,8 +145,20 @@
       }
 
       #modal-header button{
-      	display:inline-block;float:right;
+      	display:inline-block;
+      	float:right;
       }
+
+      #title h1{
+    	display:inline-block;
+      }
+      #title button{
+	    display:inline-block;
+	    float:right;
+	    margin-top:1%;
+	    margin-bottom:1%
+  	  }	
+
 
 
     </style>
@@ -171,9 +190,8 @@
 
     <div id="info">
         <div id="title">
-            <h1 style="display:inline-block;">NTUVisualizer</h1>
-            <button style="display:inline-block;float:right;margin-top:1%;margin-bottom:1%" onclick='document.getElementById("modal").style.display = "block";'>About</button>
-
+            <h1>NTUVisualizer</h1>
+            <button onclick='document.getElementById("modal").style.display = "block";'>About</button>
             <h3>Currently displayed:</h3>
         </div>
         <ul id="displayed-list"></ul>
