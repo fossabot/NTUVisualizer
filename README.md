@@ -15,8 +15,6 @@ Check on location data
 
 Switch Leaflet.js plugin (laggy)
 
-Make List interactive & add About
-
 
 Done:
 
@@ -24,6 +22,7 @@ Basic Leaflet with 6 day week (Online and unavailable location lefted out)
 
 Lectures only option
 
+Make List interactive & add About
 
 
 Plan:

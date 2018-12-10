@@ -70,7 +70,7 @@
       	font-size:1.5vh;
       }
 
-      button {
+      #day button {
       	width:15%;
       	padding:0;
       	font-size: inherit;
@@ -92,15 +92,88 @@
       #title{
       	height:10vh;
       }
+
+      ul ul {
+      	display:none;
+      }
+
+      .show{
+      	display:block;
+      }
+
+      .flipButton{
+      	background:#000;
+      	color:#fff;
+      }
+
+      #day button{
+      	border-radius:25%;
+      	padding:1%;
+      }
+
+      .class{
+      	display:none;
+      }
+
+      #modal{
+      	position: absolute; 
+      	left: 50%;
+      	top:25%;
+      	z-index:2;
+      }
+
+      #modal-container{
+      	width:300px;height:auto;background:#fff;color:#000;border:1px solid black;padding:3px;
+      }
+      #modal-header{
+      	width:100%; border-bottom:1px solid black;text-align:center
+      }
+
+      #modal-header h1{
+      	display:inline-block
+      }
+
+      #modal-header h1{
+      	display:inline-block
+      }
+
+      #modal-header button{
+      	display:inline-block;float:right;
+      }
+
+
     </style>
 
 
 </head>
 
 <body>
+
+	<div id="modal">
+    <div id="modal-container">
+    <div id="modal-header">
+    	<h1 style="">NTUVisualizer</h1>
+    	<button onclick='document.getElementById("modal").style.display = "none"'>x</button>
+    </div>
+	    <p>
+	      NTUVisualizer is a tool for visualizing classes that is ongoing at any point of time in the school.
+	      <br /><br />
+	      For bugs and feature request, <a href="https://github.com/gphofficial/NTUVisualizer/issues">Click here</a>
+	      <br /><br />
+	      Free to fork or make PR
+	      <br /><br />
+	      Created by <a href="https://gphofficial.com">GPHOfficial</a><br />
+	      Dataset from <a href="https://github.com/kenrick95/plan/tree/master/back_end/data/parsed/json">Kendrick95</a>
+	  </p>
+    </div>
+  </div>
+	
+
     <div id="info">
         <div id="title">
-            <h1>NTUVisualizer</h1>
+            <h1 style="display:inline-block;">NTUVisualizer</h1>
+            <button style="display:inline-block;float:right;margin-top:1%;margin-bottom:1%" onclick='document.getElementById("modal").style.display = "block";'>About</button>
+
             <h3>Currently displayed:</h3>
         </div>
         <ul id="displayed-list"></ul>
@@ -110,29 +183,17 @@
 
     <div id="day">
         <div><input type="checkbox" onclick="lecOnly()" />Lectures Only</div>
-        <button onclick="loadDay(1)">Mon</button>
-        <button onclick="loadDay(2)">Tue</button>
-        <button onclick="loadDay(3)">Wed</button>
-        <button onclick="loadDay(4)">Thur</button>
-        <button onclick="loadDay(5)">Fri</button>
-        <button onclick="loadDay(6)">Sat</buttons>
+        <button id="1" onclick="loadDay(1)">Mon</button>
+        <button id="2" onclick="loadDay(2)">Tue</button>
+        <button id="3" onclick="loadDay(3)">Wed</button>
+        <button id="4" onclick="loadDay(4)">Thur</button>
+        <button id="5" onclick="loadDay(5)">Fri</button>
+        <button id="6" onclick="loadDay(6)">Sat</buttons>
     </div>
 
     <div id="map"></div>
 
     <script>
-        String.prototype.hashCode = function() {
-            var hash = 0,
-                i, chr;
-            if (this.length === 0) return hash;
-            for (i = 0; i < this.length; i++) {
-                chr = this.charCodeAt(i);
-                hash = ((hash << 5) - hash) + chr;
-                hash |= 0; // Convert to 32bit integer
-            }
-            return hash;
-        };
-
 
         var osmUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png?access_token={accessToken}';
         var osmAttrib = '&copy; <a href="https://openstreetmap.org/copyright">' +
@@ -176,7 +237,7 @@
         var today = new Date();
 
         function init() {
-            if (window.innerWidth < window.innerHeight)
+            if (window.innerWidth <= window.innerHeight)
                 alert('Please view in landscape mode')
 
             loadJSON(function(response) {
@@ -205,21 +266,67 @@
             };
         };
 
+        var listHTML = {};
 
         var updateList = function(timeline) {
             var displayed = timeline.getLayers();
             var list = document.getElementById('displayed-list');
             list.innerHTML = "";
-            var listHTML = "";
-            var hasharray = [];
+            var innerHTML = "";
+            listHTML = {};
             displayed.forEach(function(item) {
-                if (hasharray.indexOf(item.feature.properties.ModCode.hashCode()) < 0) {
-                    listHTML += '<li>' + item.feature.properties.ModCode + ' ' + item.feature.properties.ModName + '</li>';
-                    hasharray.push(item.feature.properties.ModCode.hashCode());
+                if (!(item.feature.properties.ModCode in listHTML)) {
+                    listHTML[item.feature.properties.ModCode]={'name': item.feature.properties.ModName, 'list': [item.feature.properties.group]};
+                }else{
+                	if(!(listHTML[item.feature.properties.ModCode]['list'].includes(item.feature.properties.group)))
+                		listHTML[item.feature.properties.ModCode]['list'].push(item.feature.properties.group)
                 }
+                
             });
-            list.innerHTML = listHTML;
+
+            //console.log(listHTML)
+            for(var key in listHTML){
+            	if(listHTML[key]['list'].length > 1){
+            		innerHTML += '<li id="' + key + '-head' + '">' + key + ':' +  listHTML[key]['name']+ '</li>'
+            		var InnerUL = '<ul id="' + key + '-body' + '">'
+	            	for(var i in listHTML[key]['list']){
+	            		InnerUL += '<li id="' + key + ':' + listHTML[key]['list'][i] + '">' + listHTML[key]['list'][i] +'</li>'
+	            	}
+	            	InnerUL += "</ul>"
+	            	innerHTML += InnerUL;
+            	}else{
+            		innerHTML += '<li id="' + key + ':' + listHTML[key]['list'][0] + '">' + key + ':' +  listHTML[key]['name']+ '</li>'
+            	}
+            	
+            }
+
+            list.innerHTML += innerHTML;
+           
+
+			for(var item of document.getElementById('displayed-list').getElementsByTagName("li")){
+				item.onclick = function() { 
+					var position = this.id.indexOf('-')
+					if(position > -1){
+						var id = this.id.substr(0,position) + '-body'
+						if(document.getElementById(id).classList.contains('show')){
+							document.getElementById(id).classList.remove('show');
+						}else{
+							document.getElementById(id).classList.add('show');
+						}
+					} else {
+						for(var i in timeline._layers){
+							if(this.id==timeline._layers[i].options.title){
+								timeline._layers[i].openPopup();
+							}
+						}
+					}
+				}
+			}
         }
+        
+        
+
+        
 
         var lectureOnly = false;
         var currentDay = -1;
@@ -250,7 +357,12 @@
 
         function loadDay(day) {
             currentDay = day;
-
+            
+            for(var i =1;i<=6;i++){
+            	console.log(i)
+            	document.getElementById(i).classList.remove('flipButton')
+            }
+            document.getElementById(day).classList.add('flipButton')
             map.eachLayer(function(layer) {
                 if (layer != osm)
                     map.removeLayer(layer);
@@ -298,7 +410,8 @@
                         return L.circleMarker(latlng, {
                             radius: 3,
                             color: "hsl(1, 100%, 50%)",
-                            fillColor: "hsl(1, 100%, 50%)"
+                            fillColor: "hsl(1, 100%, 50%)",
+                            title: data.properties.ModCode + ":" + data.properties.group
                         }).bindPopup('<b>' + data.properties.location + '</b>' +
                             "<br />" + data.properties.ModCode + ' : ' + data.properties.ModName +
                             "<br />" + data.properties.time.full +
