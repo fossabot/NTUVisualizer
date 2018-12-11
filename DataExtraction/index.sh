@@ -3,7 +3,7 @@ npm install request-promise --save
 npm install querystring --save
 pip install beautifulsoup4
 
-python ClassScheldule/scraper.py
+python3 ClassScheldule/scraper.py
 node parse.js
 node ClassLocation/getLocationData.js
 node ClassLocation/clearFromLocationOfClasses.js
