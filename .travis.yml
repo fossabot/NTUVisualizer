@@ -1,0 +1,18 @@
+lang: generic
+before_install:
+  - cd DataExtraction
+  - npm install request --save
+  -	npm install request-promise --save
+  - npm install querystring --save
+  - pip install beautifulsoup4
+script:
+  - chmod +x index.sh
+  - ./index.sh
+deploy:
+  provider: pages
+  skip-cleanup: true
+  github-token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
+  keep-history: true
+  #target-branch: master
+  on:
+branch: master
