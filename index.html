@@ -238,7 +238,7 @@
 
             var xobj = new XMLHttpRequest();
             xobj.overrideMimeType("application/json");
-            xobj.open('GET', 'Data/' + file + '.json', true);
+            xobj.open('GET', 'Data/Web/' + file + '.json', true);
             xobj.onreadystatechange = function() {
                 if (xobj.readyState == 4 && xobj.status == "200") {
                     // Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
@@ -261,7 +261,7 @@
             loadJSON(function(response) {
                 locationList = response;
                 loadDay(today.getDay());
-            }, 'FinalData');
+            }, 'Location/Location');
 
         }
         init();
@@ -302,7 +302,7 @@
                 
             });
 
-            //console.log(listHTML)
+            
             for(var key in listHTML){
             	if(listHTML[key]['list'].length > 1){
             		innerHTML += '<li id="' + key + '-head' + '">' + key + ':' +  listHTML[key]['name']+ '</li>'
@@ -343,7 +343,15 @@
         }
         
         
-
+        var DayOfWeek = {
+          1:'Mon',
+          2:'Tue',
+          3:'Wed',
+          4:'Thu',
+          5:'Fri',
+          6:'Sat',
+          7:'Sun',
+        }
         
 
         var lectureOnly = false;
@@ -396,6 +404,7 @@
 
                 var arrayLength = classes.length;
                 for (var i = 0; i < arrayLength; i++) {
+                    // console.log(locationList)
                     var latlng = locationList[classes[i]["location"]];
 
                     if (lectureOnly)
@@ -449,7 +458,7 @@
                 timelineControl._stepDuration = 1000;
                 timelineControl._stepSize = 900000
 
-            }, 'ClassList/' + day + '/classList');
+            }, 'Classes/' + DayOfWeek[day] + '/classList');
         }
     </script>
 </body>
