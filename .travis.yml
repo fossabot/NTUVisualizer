@@ -2,7 +2,7 @@ lang: generic
 before_install:
   - cd DataExtraction
   - npm install request --save
-  -	npm install request-promise --save
+  - npm install request-promise --save
   - npm install querystring --save
   - pip install beautifulsoup4
 script:
