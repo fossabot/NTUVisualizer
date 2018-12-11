@@ -1,6 +1,6 @@
 var fs = require('fs');
 const path = require('path');
-var obj = JSON.parse(fs.readFileSync('Data/2018_1_data.json', 'utf8'));
+var obj = JSON.parse(fs.readFileSync('../Data/Raw/ClassScheldule/2018;2.json'));
 
 // Break down by ending time to diff file
 // Find out last time for class
@@ -14,50 +14,63 @@ var LocationsOfClasses = [];
 
 //Iterate Mod
 for (var key in obj) {
-    if (obj.hasOwnProperty(key)) {
         //console.log(key + " -> " + obj[key]);
         //List of Indexes within a mod
-        var indexes = obj[key]["index"];
+        var sessions = obj[key]["modSessions"];
         //iterate index
-        for (var index = 0; index < indexes.length; index++) {
+        for (var index = 0; index < sessions.length; index++) {
 		    //console.log(indexes[index]["details"])
 		    //List of class within an index within a mod
-		    var classArray = indexes[index]["details"];
-		    for (var classindex = 0; classindex < classArray.length; classindex++) {
+		    var classArray = sessions[index];
+		    // for (var classindex = 0; classindex < classArray.length; classindex++) {
 
-		    	if(!TypesOfClasses.includes(classArray[classindex]["type"])){
-		    		TypesOfClasses.push(classArray[classindex]["type"]);
+		    	if(!TypesOfClasses.includes(sessions[index]["type"])){
+		    		TypesOfClasses.push(sessions[index]["type"]);
 		    	}
 
-		    	if(!DaysOfClasses.includes(classArray[classindex]["day"])){
-		    		DaysOfClasses.push(classArray[classindex]["day"]);
-		    		ClassObj[classArray[classindex]["day"]] = []
+		    	if(!DaysOfClasses.includes(sessions[index]["day"])){
+		    		DaysOfClasses.push(sessions[index]["day"]);
+		    		ClassObj[sessions[index]["day"]] = []
 		    	}
 
-		    	if(!LocationsOfClasses.includes(classArray[classindex]["location"]) && classArray[classindex]["location"] != "" 
-		    		&& classArray[classindex]["location"] != "ONLINE"){
-		    		LocationsOfClasses.push(classArray[classindex]["location"]);
+		    	if(!LocationsOfClasses.includes(sessions[index]["venue"]) && sessions[index]["venue"] != "" 
+		    		&& sessions[index]["venue"] != "ONLINE"){
+		    		LocationsOfClasses.push(sessions[index]["venue"]);
 		    	}
 
-	    		classArray[classindex]["ModCode"] = key;
-	    		classArray[classindex]["ModName"] = obj[key]["name"];
-		    	ClassObj[classArray[classindex]["day"]].push(classArray[classindex]);
+	    		classArray["ModCode"] = key;
+	    		classArray["ModName"] = obj[key]["modTitle"];
+	    		classArray["location"] = classArray["venue"];
+	    		delete classArray["venue"]
+	    		classArray["remarks"] = classArray["remark"];
+	    		delete classArray["remark"]
+	    		var timeArray = classArray["time"].split("-")
+	    		classArray["time"] = { 
+	    			'start': classArray["time"].split("-")[0], 
+		    		'end': classArray["time"].split("-")[1], 
+		    		'full': classArray["time"]
+		    	};
 
-			}
+
+
+		    	ClassObj[sessions[index]["day"]].push(classArray);
+
+			// }
 		}
-    }
 }
 
 for (var key in ClassObj) {
-	var keyName = key;
+	
 	var numberOfKeys = Object.keys(ClassObj).length;
     if (ClassObj.hasOwnProperty(key)) {
-        if(keyName == ""){
-			keyName = "NO"
+
+        if(key == ""){
+			key = "None"
 		}
-		fs.existsSync("Data/ClassList/"+keyName) || fs.mkdirSync("Data/ClassList/"+keyName);
+		var keyName=key[0].toUpperCase() + key.substr(1).toLowerCase()
+		fs.existsSync("../Data/Web/Classes/"+keyName) || fs.mkdirSync("../Data/Web/Classes/"+keyName);
 		var iterationNumber = 0;
-        fs.writeFile("Data/ClassList/" + keyName + "/classList.json", JSON.stringify(ClassObj[key]), function(err) {
+        fs.writeFile("../Data/Web/Classes/" + keyName + "/classList.json", JSON.stringify(ClassObj[key]), function(err) {
 		    if(err) {
 		        return console.log(err);
 		    }
@@ -70,7 +83,7 @@ for (var key in ClassObj) {
     }
 }
 
-fs.writeFile("Data/TypesOfClasses.json", JSON.stringify(TypesOfClasses), function(err) {
+fs.writeFile("../Data/Processed/TypesOfClasses.json", JSON.stringify(TypesOfClasses), function(err) {
     if(err) {
         return console.log(err);
     }else{
@@ -79,7 +92,7 @@ fs.writeFile("Data/TypesOfClasses.json", JSON.stringify(TypesOfClasses), functio
     
 }); 
 
-fs.writeFile("Data/LocationsOfClasses.json", JSON.stringify(LocationsOfClasses), function(err) {
+fs.writeFile("../Data/Processed/LocationsOfClasses.json", JSON.stringify(LocationsOfClasses), function(err) {
     if(err) {
         return console.log(err);
     }else{
@@ -88,7 +101,7 @@ fs.writeFile("Data/LocationsOfClasses.json", JSON.stringify(LocationsOfClasses),
     
 }); 
 
-fs.writeFile("Data/DaysOfClasses.json", JSON.stringify(DaysOfClasses), function(err) {
+fs.writeFile("../Data/Processed/DaysOfClasses.json", JSON.stringify(DaysOfClasses), function(err) {
     if(err) {
         return console.log(err);
     }else{
