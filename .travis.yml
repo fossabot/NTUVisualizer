@@ -1,8 +1,8 @@
 lang: python
 before_install:
   - sudo apt-get install libffi-dev libssl-dev
+  - python -m pip install --upgrade pip
   - pip install requests[security]
-  - pip install --upgrade pip
   - cd DataExtraction
   - npm install request --save
   - npm install request-promise --save
