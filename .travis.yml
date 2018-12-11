@@ -1,8 +1,8 @@
 lang: generic
 before_install:
-  - pip install --upgrade pip
-  - pip install requests[security]
   - sudo apt-get install libffi-dev libssl-dev
+  - pip install requests[security]
+  - pip install --upgrade pip
   - cd DataExtraction
   - npm install request --save
   - npm install request-promise --save
