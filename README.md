@@ -1,4 +1,6 @@
 # NTUVisualizer
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FGPHofficial%2FNTUVisualizer.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FGPHofficial%2FNTUVisualizer?ref=badge_shield)
+
 Visualize currently occuring classes in Nanyang Tech
 
 
@@ -34,3 +36,7 @@ Heatmap of sorts maybe
 Built with: [Leaflet.js](https://github.com/Leaflet/Leaflet), [Leaflet-timeline.js](https://github.com/skeate/Leaflet.timeline), Node.js.
 
 Dataset from [Kendrick95's Plan](https://github.com/kenrick95/plan/tree/master/back_end/data/parsed/json)
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FGPHofficial%2FNTUVisualizer.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FGPHofficial%2FNTUVisualizer?ref=badge_large)
